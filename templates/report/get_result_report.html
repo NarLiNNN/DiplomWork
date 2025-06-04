@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Отчет по проверке документа</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2 { color: #2c3e50; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f2f2f2; }
+        .status-ok { color: green; font-weight: bold; }
+        .status-fail { color: red; font-weight: bold; }
+        .error-details { font-size: 0.9em; color: #a94442; }
+    </style>
+</head>
+<body>
+    <h1>Отчет по проверке документа</h1>
+
+    <!-- Отчет по стилям -->
+    <h2>Отчет по стилям в документе</h2>
+    {% for style_name, style_info in result["Отчет по стилям в документе"].items() %}
+        <h3>Стиль: {{ style_name }}</h3>
+        <table>
+            <tr><th>Параметр</th><th>Значение</th></tr>
+            <tr><td>Используемый шрифт</td><td>{{ style_info["Используемый шрифт"] }}</td></tr>
+            <tr><td>Размер шрифта</td><td>{{ style_info["Размер шрифта"] }}</td></tr>
+            <tr><td>Цвет шрифта</td><td>{{ style_info["Цвет шрифта"] }}</td></tr>
+            <tr><td>Жирный</td><td>{{ "Да" if style_info["Жирный"] else "Нет" }}</td></tr>
+            <tr><td>Курсивный</td><td>{{ "Да" if style_info["Курсивный"] else "Нет" }}</td></tr>
+            <tr><td>Подчеркнутый</td><td>{{ "Да" if style_info["Подчеркнутый"] else "Нет" }}</td></tr>
+            <tr><td>Межстрочный интервал</td><td>{{ style_info["Межстрочный интервал"] }}</td></tr>
+            <tr><td>Отступ первой строки</td><td>{{ style_info["Отступ первой строки"] }}</td></tr>
+            <tr><td>Отступ после абзаца</td><td>{{ style_info["Отступ после абзаца"] }}</td></tr>
+            <tr><td>Отступ перед абзацем</td><td>{{ style_info["Отступ перед абзацем"] }}</td></tr>
+            <tr><td>Выравнивание</td><td>{{ style_info["Выравнивание"] }}</td></tr>
+            <tr>
+                <td><strong>Заключение</strong></td>
+                <td class="{{ 'status-ok' if 'соответствует' in style_info['Заключение'] else 'status-fail' }}">
+                    {{ style_info["Заключение"] }}
+                </td>
+            </tr>
+        </table>
+    {% endfor %}
+
+    <!-- Отчет по абзацам -->
+    <h2>Отчет по абзацам (параграфам)</h2>
+    <table>
+        <tr><th>Показатель</th><th>Значение</th></tr>
+        <tr><td>Общее количество абзацев</td><td>{{ result["Отчет по абзацам (параграфам)"]["Общее количество абзацев"] }}</td></tr>
+        <tr><td>Количество абзацев, соответствующих правилам</td><td>{{ result["Отчет по абзацам (параграфам)"]["Количество абзацев, соответствующих правилам"] }}</td></tr>
+        <tr><td>Нетекстовые абзацы</td><td>{{ result["Отчет по абзацам (параграфам)"]["Нетекстовые абзацы"] }}</td></tr>
+        <tr><td>Количество абзацев с нарушениями</td><td>{{ result["Отчет по абзацам (параграфам)"]["Количество абзацев с нарушениями"] }}</td></tr>
+    </table>
+
+    {% if result["Отчет по абзацам (параграфам)"]["Количество абзацев с нарушениями"] > 0 %}
+        <h3>Абзацы с нарушениями</h3>
+        {% for num, violation in result["Отчет по абзацам (параграфам)"]["Абзацы с нарушениями"].items() %}
+            <div class="error-details">
+                <p><strong>Номер абзаца:</strong> {{ violation["Номер абзаца"] }}</p>
+                <p><strong>Нарушенный стиль:</strong> {{ violation["Нарушенный стиль"] }}</p>
+                <p><strong>Тип ошибки:</strong> {{ violation["Тип ошибки"] }}</p>
+                <p><strong>Часть текста абзаца:</strong> {{ violation["Часть текста абзаца"] }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Отчет по полям -->
+    <h2>Отчет по полям</h2>
+    {% for section, margins in result["Отчет по полям"].items() %}
+        <h3>{{ section }}</h3>
+        <table>
+            <tr><th>Поле</th><th>Значение (см)</th></tr>
+            <tr><td>Левое поле</td><td>{{ margins["Левое поле"] }}</td></tr>
+            <tr><td>Правое поле</td><td>{{ margins["Правое поле"] }}</td></tr>
+            <tr><td>Верхнее поле</td><td>{{ margins["Верхнее поле"] }}</td></tr>
+            <tr><td>Нижнее поле</td><td>{{ margins["Нижнее поле"] }}</td></tr>
+        </table>
+    {% endfor %}
+</body>
+</html>
